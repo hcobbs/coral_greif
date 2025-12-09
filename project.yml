@@ -24,3 +24,29 @@ targets:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
+
+  CoralGreifTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - CoralGreifTests
+    dependencies:
+      - target: CoralGreif
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.coralgreif.tests
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  CoralGreif:
+    build:
+      targets:
+        CoralGreif: all
+        CoralGreifTests: [test]
+    test:
+      targets:
+        - CoralGreifTests
+      gatherCoverageData: true
+      coverageTargets:
+        - CoralGreif
