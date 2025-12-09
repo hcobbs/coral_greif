@@ -1,6 +1,6 @@
 # Coral Greif: Game Manual
 
-*Copyright (c) 2024 T. Hunter Cobbs. All Rights Reserved.*
+*Copyright (C) 2024 T. Hunter Cobbs. Licensed under GPLv3.*
 
 ---
 
