@@ -1,5 +1,7 @@
 # Coral Greif Implementation Plan
 
+*Copyright (c) 2024 T. Hunter Cobbs. All Rights Reserved.*
+
 ## Overview
 
 Turn-based naval strategy game (Battleship variant) for iOS. Single-player vs AI with WWII Pacific theater theme.

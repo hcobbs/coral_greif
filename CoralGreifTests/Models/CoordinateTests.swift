@@ -1,3 +1,10 @@
+//
+//  CoordinateTests.swift
+//  Coral Greif Tests
+//
+//  Copyright (c) 2024 T. Hunter Cobbs. All Rights Reserved.
+//
+
 import XCTest
 @testable import CoralGreif
 

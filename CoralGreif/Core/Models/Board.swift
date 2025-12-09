@@ -1,3 +1,10 @@
+//
+//  Board.swift
+//  Coral Greif
+//
+//  Copyright (c) 2024 T. Hunter Cobbs. All Rights Reserved.
+//
+
 import Foundation
 
 /// Represents a player's game board with a 10x10 grid and ship placements.
