@@ -23,6 +23,7 @@ final class BattleViewController: UIViewController {
     private let engine: GameEngine
     private let playerId: UUID
     private let punGenerator = PunGenerator.shared
+    private let soundManager = SoundManager.shared
 
     /// Whether the player can interact (their turn)
     private var canInteract: Bool {
@@ -235,16 +236,19 @@ final class BattleViewController: UIViewController {
 
         switch result {
         case .miss:
+            soundManager.playGameEvent(.miss)
             boardView.animateMiss(at: coordinate) { [weak self] in
                 self?.showPun(for: .onMiss)
             }
 
         case .hit:
+            soundManager.playGameEvent(.hit)
             boardView.animateHit(at: coordinate) { [weak self] in
                 self?.showPun(for: .onHit)
             }
 
         case .sunk(let shipType):
+            soundManager.playGameEvent(.sunk(shipType))
             boardView.animateHit(at: coordinate) { [weak self] in
                 self?.showSunkMessage(shipType: shipType, byPlayer: isPlayer)
             }
@@ -320,6 +324,7 @@ final class BattleViewController: UIViewController {
     // MARK: - Feedback
 
     private func showStartPun() {
+        soundManager.playGameEvent(.gameStart)
         punLabel.text = punGenerator.pun(for: .onGameStart)
     }
 
@@ -336,13 +341,12 @@ final class BattleViewController: UIViewController {
     }
 
     private func showInvalidAttackFeedback() {
-        let generator = UINotificationFeedbackGenerator()
-        generator.notificationOccurred(.error)
-
+        soundManager.playGameEvent(.invalidAction)
         punLabel.text = "Already fired there, Captain!"
     }
 
     private func showTimeoutWarning() {
+        soundManager.playGameEvent(.turnTimeout)
         punLabel.text = punGenerator.pun(for: .onTimeout)
         punLabel.textColor = AppTheme.Colors.warningOrange
 
@@ -385,10 +389,12 @@ extension BattleViewController: GameEngineDelegate {
     }
 
     func gameEngine(_ engine: GameEngine, gameDidEndWithWinner winnerId: UUID) {
-        // Show appropriate pun
+        // Show appropriate pun and play sound
         if winnerId == playerId {
+            soundManager.playGameEvent(.victory)
             punLabel.text = punGenerator.pun(for: .onVictory)
         } else {
+            soundManager.playGameEvent(.defeat)
             punLabel.text = punGenerator.pun(for: .onDefeat)
         }
 

@@ -22,6 +22,7 @@ final class SetupViewController: UIViewController {
 
     private let engine: GameEngine
     private let playerId: UUID
+    private let soundManager = SoundManager.shared
 
     /// Ships remaining to place
     private var shipsToPlace: [ShipType]
@@ -291,6 +292,8 @@ final class SetupViewController: UIViewController {
         let result = engine.placeShip(ship, for: playerId)
 
         if case .success = result {
+            soundManager.playGameEvent(.shipPlaced)
+
             // Remove from ships to place
             if let index = shipsToPlace.firstIndex(of: shipType) {
                 shipsToPlace.remove(at: index)
@@ -312,6 +315,7 @@ final class SetupViewController: UIViewController {
             }
         } else {
             // Invalid placement
+            soundManager.playGameEvent(.invalidAction)
             showInvalidPlacementFeedback()
         }
     }

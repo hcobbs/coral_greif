@@ -19,6 +19,7 @@ final class MainMenuViewController: UIViewController {
     // MARK: - Properties
 
     weak var delegate: MainMenuDelegate?
+    private let soundManager = SoundManager.shared
 
     // MARK: - UI Elements
 
@@ -201,6 +202,8 @@ final class MainMenuViewController: UIViewController {
     @objc private func difficultyTapped(_ gesture: UITapGestureRecognizer) {
         guard let view = gesture.view else { return }
         let difficulty = AIDifficulty.allCases[view.tag]
+
+        soundManager.playGameEvent(.buttonTap)
 
         // Animate tap
         UIView.animate(withDuration: 0.1, animations: {
