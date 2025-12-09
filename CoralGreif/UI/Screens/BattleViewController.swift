@@ -39,13 +39,10 @@ final class BattleViewController: UIViewController {
         return label
     }()
 
-    private lazy var timerLabel: UILabel = {
-        let label = UILabel()
-        label.font = AppTheme.Fonts.timer()
-        label.textColor = AppTheme.Colors.textPrimary
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private lazy var timerView: CircularTimerView = {
+        let view = CircularTimerView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
 
     private lazy var punLabel: UILabel = {
@@ -74,9 +71,9 @@ final class BattleViewController: UIViewController {
         return view
     }()
 
-    private lazy var playerBoardLabel: UILabel = {
+    private lazy var fleetStatusLabel: UILabel = {
         let label = UILabel()
-        label.text = "Your Fleet"
+        label.text = "Your Fleet Status"
         label.font = AppTheme.Fonts.caption()
         label.textColor = AppTheme.Colors.textSecondary
         label.textAlignment = .center
@@ -84,10 +81,8 @@ final class BattleViewController: UIViewController {
         return label
     }()
 
-    private lazy var playerBoardView: GameBoardView = {
-        let view = GameBoardView()
-        view.displayMode = .full
-        view.interactionEnabled = false
+    private lazy var fleetStatusView: FleetStatusView = {
+        let view = FleetStatusView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -95,8 +90,7 @@ final class BattleViewController: UIViewController {
     private lazy var forfeitButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Surrender", for: .normal)
-        button.setTitleColor(AppTheme.Colors.textSecondary, for: .normal)
-        button.titleLabel?.font = AppTheme.Fonts.caption()
+        button.applySecondaryStyle()
         button.addTarget(self, action: #selector(forfeitTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -139,31 +133,37 @@ final class BattleViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = AppTheme.Colors.oceanDeep
 
+        view.addSubview(timerView)
         view.addSubview(turnLabel)
-        view.addSubview(timerLabel)
         view.addSubview(punLabel)
         view.addSubview(enemyBoardLabel)
         view.addSubview(enemyBoardView)
-        view.addSubview(playerBoardLabel)
-        view.addSubview(playerBoardView)
-        view.addSubview(forfeitButton)
         view.addSubview(statsView)
+        view.addSubview(fleetStatusLabel)
+        view.addSubview(fleetStatusView)
+        view.addSubview(forfeitButton)
 
         let padding = AppTheme.Layout.padding
         let smallPadding = AppTheme.Layout.paddingSmall
 
         NSLayoutConstraint.activate([
+            // Timer in upper right
+            timerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: smallPadding),
+            timerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            timerView.widthAnchor.constraint(equalToConstant: 44),
+            timerView.heightAnchor.constraint(equalToConstant: 44),
+
+            // Turn label on the left, with space for timer
             turnLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: smallPadding),
-            turnLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            turnLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
+            turnLabel.trailingAnchor.constraint(lessThanOrEqualTo: timerView.leadingAnchor, constant: -padding),
 
-            timerLabel.topAnchor.constraint(equalTo: turnLabel.bottomAnchor, constant: smallPadding),
-            timerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-
-            punLabel.topAnchor.constraint(equalTo: timerLabel.bottomAnchor, constant: smallPadding),
+            // Pun below turn label
+            punLabel.topAnchor.constraint(equalTo: turnLabel.bottomAnchor, constant: smallPadding),
             punLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
             punLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
 
-            enemyBoardLabel.topAnchor.constraint(equalTo: punLabel.bottomAnchor, constant: padding),
+            enemyBoardLabel.topAnchor.constraint(equalTo: punLabel.bottomAnchor, constant: smallPadding),
             enemyBoardLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
             enemyBoardView.topAnchor.constraint(equalTo: enemyBoardLabel.bottomAnchor, constant: smallPadding),
@@ -171,20 +171,20 @@ final class BattleViewController: UIViewController {
             enemyBoardView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
             enemyBoardView.heightAnchor.constraint(equalTo: enemyBoardView.widthAnchor),
 
-            statsView.topAnchor.constraint(equalTo: enemyBoardView.bottomAnchor, constant: padding),
+            statsView.topAnchor.constraint(equalTo: enemyBoardView.bottomAnchor, constant: smallPadding),
             statsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
             statsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
 
-            playerBoardLabel.topAnchor.constraint(equalTo: statsView.bottomAnchor, constant: padding),
-            playerBoardLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            fleetStatusLabel.topAnchor.constraint(equalTo: statsView.bottomAnchor, constant: smallPadding),
+            fleetStatusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
-            playerBoardView.topAnchor.constraint(equalTo: playerBoardLabel.bottomAnchor, constant: smallPadding),
-            playerBoardView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding * 3),
-            playerBoardView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding * 3),
-            playerBoardView.heightAnchor.constraint(equalTo: playerBoardView.widthAnchor),
+            fleetStatusView.topAnchor.constraint(equalTo: fleetStatusLabel.bottomAnchor, constant: smallPadding),
+            fleetStatusView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
+            fleetStatusView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
 
-            forfeitButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -smallPadding),
-            forfeitButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            forfeitButton.topAnchor.constraint(equalTo: fleetStatusView.bottomAnchor, constant: smallPadding),
+            forfeitButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            forfeitButton.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -smallPadding)
         ])
     }
 
@@ -232,25 +232,41 @@ final class BattleViewController: UIViewController {
     }
 
     private func handleAttackResult(_ result: AttackResult, at coordinate: Coordinate, isPlayer: Bool) {
-        let boardView = isPlayer ? enemyBoardView : playerBoardView
+        if isPlayer {
+            // Player attacked enemy - animate on enemy board
+            switch result {
+            case .miss:
+                soundManager.playGameEvent(.miss)
+                enemyBoardView.animateMiss(at: coordinate) { [weak self] in
+                    self?.showPun(for: .onMiss)
+                }
 
-        switch result {
-        case .miss:
-            soundManager.playGameEvent(.miss)
-            boardView.animateMiss(at: coordinate) { [weak self] in
-                self?.showPun(for: .onMiss)
+            case .hit:
+                soundManager.playGameEvent(.hit)
+                enemyBoardView.animateHit(at: coordinate) { [weak self] in
+                    self?.showPun(for: .onHit)
+                }
+
+            case .sunk(let shipType):
+                soundManager.playGameEvent(.sunk(shipType))
+                enemyBoardView.animateHit(at: coordinate) { [weak self] in
+                    self?.showSunkMessage(shipType: shipType, byPlayer: isPlayer)
+                }
             }
+        } else {
+            // Enemy attacked player - just play sound and show pun (fleet status updates automatically)
+            switch result {
+            case .miss:
+                soundManager.playGameEvent(.miss)
+                showPun(for: .onMiss)
 
-        case .hit:
-            soundManager.playGameEvent(.hit)
-            boardView.animateHit(at: coordinate) { [weak self] in
-                self?.showPun(for: .onHit)
-            }
+            case .hit:
+                soundManager.playGameEvent(.hit)
+                showPun(for: .onGettingHit)
 
-        case .sunk(let shipType):
-            soundManager.playGameEvent(.sunk(shipType))
-            boardView.animateHit(at: coordinate) { [weak self] in
-                self?.showSunkMessage(shipType: shipType, byPlayer: isPlayer)
+            case .sunk(let shipType):
+                soundManager.playGameEvent(.sunk(shipType))
+                showSunkMessage(shipType: shipType, byPlayer: isPlayer)
             }
         }
 
@@ -279,7 +295,7 @@ final class BattleViewController: UIViewController {
 
     private func updateBoards() {
         enemyBoardView.board = engine.gameState.opponentBoard(for: playerId)
-        playerBoardView.board = engine.gameState.board(for: playerId)
+        fleetStatusView.update(with: engine.gameState.board(for: playerId))
     }
 
     private func updateStats() {
@@ -312,13 +328,8 @@ final class BattleViewController: UIViewController {
     }
 
     private func updateTimer(_ seconds: Int) {
-        timerLabel.text = String(format: "%02d", seconds)
-
-        if seconds <= 5 {
-            timerLabel.textColor = AppTheme.Colors.warningOrange
-        } else {
-            timerLabel.textColor = AppTheme.Colors.textPrimary
-        }
+        let progress = CGFloat(seconds) / CGFloat(engine.turnDuration)
+        timerView.setProgress(progress, warning: seconds <= 5)
     }
 
     // MARK: - Feedback
@@ -534,5 +545,79 @@ final class BattleStatsView: UIView {
         playerHitsLabel.text = "Hits: \(playerHits) | Accuracy: \(accuracy)%"
         playerShipsLabel.text = "Your Ships: \(playerShipsRemaining)/5"
         enemyShipsLabel.text = "Enemy Ships: \(enemyShipsRemaining)/5"
+    }
+}
+
+// MARK: - Circular Timer View
+
+/// A circular countdown timer that shows progress as an arc.
+final class CircularTimerView: UIView {
+
+    private let trackLayer = CAShapeLayer()
+    private let progressLayer = CAShapeLayer()
+
+    private let trackColor = AppTheme.Colors.navySteel.withAlphaComponent(0.3)
+    private let normalColor = AppTheme.Colors.brassGold
+    private let warningColor = AppTheme.Colors.warningOrange
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupLayers()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupLayers()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updatePaths()
+    }
+
+    private func setupLayers() {
+        // Track layer (background circle)
+        trackLayer.fillColor = UIColor.clear.cgColor
+        trackLayer.strokeColor = trackColor.cgColor
+        trackLayer.lineWidth = 4
+        trackLayer.lineCap = .round
+        layer.addSublayer(trackLayer)
+
+        // Progress layer (foreground arc)
+        progressLayer.fillColor = UIColor.clear.cgColor
+        progressLayer.strokeColor = normalColor.cgColor
+        progressLayer.lineWidth = 4
+        progressLayer.lineCap = .round
+        progressLayer.strokeEnd = 1.0
+        layer.addSublayer(progressLayer)
+    }
+
+    private func updatePaths() {
+        let center = CGPoint(x: bounds.midX, y: bounds.midY)
+        let radius = min(bounds.width, bounds.height) / 2 - 4
+
+        // Start from top (12 o'clock) and go clockwise
+        let startAngle = -CGFloat.pi / 2
+        let endAngle = startAngle + 2 * CGFloat.pi
+
+        let path = UIBezierPath(
+            arcCenter: center,
+            radius: radius,
+            startAngle: startAngle,
+            endAngle: endAngle,
+            clockwise: true
+        )
+
+        trackLayer.path = path.cgPath
+        progressLayer.path = path.cgPath
+    }
+
+    /// Sets the timer progress.
+    /// - Parameters:
+    ///   - progress: Value from 0.0 (empty) to 1.0 (full)
+    ///   - warning: Whether to show warning color
+    func setProgress(_ progress: CGFloat, warning: Bool) {
+        progressLayer.strokeEnd = max(0, min(1, progress))
+        progressLayer.strokeColor = warning ? warningColor.cgColor : normalColor.cgColor
     }
 }
