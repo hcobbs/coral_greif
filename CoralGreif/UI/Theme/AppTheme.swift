@@ -32,6 +32,9 @@ enum AppTheme {
         /// Sunk ship dark
         static let sunkDark = UIColor(red: 0.25, green: 0.12, blue: 0.10, alpha: 1.0)
 
+        /// Sunk ship color (alias for SpriteKit compatibility)
+        static let sunkShip = sunkDark
+
         /// Gold accent for highlights and buttons
         static let brassGold = UIColor(red: 0.80, green: 0.65, blue: 0.30, alpha: 1.0)
 
