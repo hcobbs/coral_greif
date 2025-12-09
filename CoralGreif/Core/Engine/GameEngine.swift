@@ -175,6 +175,9 @@ final class GameEngine {
         }
     }
 
+    /// Delay before starting the next turn (allows animation/pun reading time).
+    private let turnTransitionDelay: TimeInterval = 3.0
+
     /// Executes an attack at the specified coordinate.
     /// - Parameters:
     ///   - coordinate: The target coordinate
@@ -197,12 +200,19 @@ final class GameEngine {
 
         switch result {
         case .success(let attackResult):
+            // Stop the timer immediately after a successful attack
+            turnManager?.stop()
+            turnManager = nil
+
             delegate?.gameEngine(self, didExecuteAttack: attackResult, at: coordinate, by: playerId)
 
             if gameState.isFinished {
                 endGame()
             } else {
-                startTurn()
+                // Delay before starting next turn to allow animation and pun reading
+                DispatchQueue.main.asyncAfter(deadline: .now() + turnTransitionDelay) { [weak self] in
+                    self?.startTurn()
+                }
             }
 
             return .success(attackResult)

@@ -16,14 +16,13 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.coralgreif.game
         INFOPLIST_FILE: CoralGreif/Info.plist
         SWIFT_VERSION: "5.0"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     info:
       path: CoralGreif/Info.plist
       properties:
         UILaunchStoryboardName: LaunchScreen
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationLandscapeLeft
-          - UIInterfaceOrientationLandscapeRight
 
   CoralGreifTests:
     type: bundle.unit-test

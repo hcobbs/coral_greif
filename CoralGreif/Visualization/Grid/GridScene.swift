@@ -76,17 +76,46 @@ final class GridScene: SKScene {
     /// Currently highlighted cell.
     private var currentHighlight: Coordinate?
 
+    /// Track if scene has been set up
+    private var isSetUp = false
+
+    /// Track if gestures have been set up
+    private var gesturesSetUp = false
+
     // MARK: - Scene Lifecycle
 
     override func didMove(to view: SKView) {
         super.didMove(to: view)
-        setupScene()
-        setupGestureRecognizers()
+        if !gesturesSetUp {
+            setupGestureRecognizers()
+            gesturesSetUp = true
+        }
+        // Only set up scene if we have a valid size
+        if size.width > 10 && size.height > 10 {
+            setupScene()
+        }
+    }
+
+    override func didChangeSize(_ oldSize: CGSize) {
+        super.didChangeSize(oldSize)
+
+        // Set up or rebuild when we get a valid size
+        guard size.width > 10 && size.height > 10 else { return }
+
+        if !isSetUp {
+            setupScene()
+        } else if size != oldSize {
+            rebuildGrid()
+        }
     }
 
     // MARK: - Setup
 
     private func setupScene() {
+        guard !isSetUp else { return }
+        guard size.width > 10 && size.height > 10 else { return }
+        isSetUp = true
+
         backgroundColor = AppTheme.Colors.oceanDeep
 
         // Calculate cell size based on scene size
@@ -109,6 +138,41 @@ final class GridScene: SKScene {
 
         // Build the grid
         buildGrid()
+    }
+
+    /// Rebuilds the grid when size changes.
+    private func rebuildGrid() {
+        // Clear existing nodes from containers first
+        shipContainer.removeAllChildren()
+        markerContainer.removeAllChildren()
+        highlightContainer.removeAllChildren()
+        effectContainer.removeAllChildren()
+
+        // Clear grid container (removes cells and the containers)
+        gridContainer.removeAllChildren()
+        cellNodes.removeAll()
+        shipSprites.removeAll()
+
+        // Re-add containers
+        gridContainer.addChild(shipContainer)
+        gridContainer.addChild(highlightContainer)
+        gridContainer.addChild(markerContainer)
+        gridContainer.addChild(effectContainer)
+
+        // Recalculate cell size
+        let boardSize = min(size.width, size.height) * 0.95
+        cellSize = boardSize / CGFloat(Coordinate.boardSize)
+
+        // Center the grid
+        let gridOrigin = CGPoint(
+            x: (size.width - boardSize) / 2,
+            y: (size.height - boardSize) / 2
+        )
+        gridContainer.position = gridOrigin
+
+        // Rebuild
+        buildGrid()
+        updateGridDisplay()
     }
 
     private func buildGrid() {

@@ -137,10 +137,16 @@ final class GameBoardView: UIView {
         super.layoutSubviews()
 
         // Present scene with correct size when view is laid out
-        if gridScene.view == nil && bounds.size.width > 0 && bounds.size.height > 0 {
+        guard bounds.size.width > 0 && bounds.size.height > 0 else { return }
+
+        if gridScene.view == nil {
+            // First time setup - use the final bounds
             gridScene.size = bounds.size
-            gridScene.scaleMode = .aspectFill
+            gridScene.scaleMode = .resizeFill
             skView.presentScene(gridScene)
+        } else if gridScene.size != bounds.size {
+            // Size changed - update scene size
+            gridScene.size = bounds.size
         }
     }
 

@@ -86,7 +86,8 @@ final class ShipSprite: SKNode {
 
     // MARK: - Path Creation
 
-    /// Creates an oriented path for the ship.
+    /// Creates an oriented path for the ship, centered around (0,0).
+    /// Base paths are in unit coordinates [0,1] x [0,1] with bow pointing right.
     private static func createOrientedPath(
         for type: ShipType,
         size: CGSize,
@@ -94,15 +95,24 @@ final class ShipSprite: SKNode {
     ) -> CGPath {
         let basePath = ShipPaths.path(for: type)
 
+        // Transform order: rightmost operation applies first
+        // We need: translate to center (in unit coords), then scale, then rotate if vertical
         var transform: CGAffineTransform
         if orientation == .horizontal {
-            // Scale to fit horizontally (ship runs left to right)
+            // 1. Translate by (-0.5, -0.5) to center unit path at origin
+            // 2. Scale to actual size (width=length, height=beam)
+            // Chain: S * T means T applies first, then S
             transform = CGAffineTransform(scaleX: size.width, y: size.height)
+                .translatedBy(x: -0.5, y: -0.5)
         } else {
-            // Rotate 90 degrees and scale (ship runs top to bottom)
-            transform = CGAffineTransform(rotationAngle: .pi / 2)
-                .scaledBy(x: size.height, y: size.width)
-                .translatedBy(x: 0, y: -1)
+            // For vertical: the base path is horizontal, we need to rotate it
+            // size.width = beam, size.height = length (swapped from horizontal)
+            // We scale by (length, beam) so the ship has correct proportions,
+            // then rotate -90 degrees so bow points down
+            // Chain: R * S * T (T first, then S, then R)
+            transform = CGAffineTransform(rotationAngle: -.pi / 2)
+                .scaledBy(x: size.height, y: size.width)  // Use length for x, beam for y
+                .translatedBy(x: -0.5, y: -0.5)
         }
 
         if let transformed = basePath.copy(using: &transform) {
