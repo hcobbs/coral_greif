@@ -1,0 +1,26 @@
+name: CoralGreif
+options:
+  bundleIdPrefix: com.coralgreif
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "16.0"
+
+targets:
+  CoralGreif:
+    type: application
+    platform: iOS
+    sources:
+      - CoralGreif
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.coralgreif.game
+        INFOPLIST_FILE: CoralGreif/Info.plist
+        SWIFT_VERSION: "5.0"
+    info:
+      path: CoralGreif/Info.plist
+      properties:
+        UILaunchStoryboardName: LaunchScreen
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
