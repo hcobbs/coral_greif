@@ -1,6 +1,6 @@
 # CLAUDE.md - Coral Greif Project Instructions
 
-*Copyright (c) 2024 T. Hunter Cobbs. All Rights Reserved.*
+*Copyright (C) 2024 T. Hunter Cobbs. Licensed under GPLv3.*
 
 This file provides project-specific guidance for Claude Code when working on Coral Greif.
 

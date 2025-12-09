@@ -72,11 +72,15 @@ All interfaces are interrupt-driven. No polling. If you see a timer spinning in 
 
 This is a personal project. If you've somehow found it and want to contribute, open an issue first. Cold PRs will be evaluated with appropriate skepticism.
 
+## Disclaimer
+
+**This is a technology demonstration only.** This software is provided as-is for educational and demonstration purposes. It is not recommended for production use. The author takes no responsibility for any issues arising from the use of this code.
+
 ## License
 
-Copyright (c) 2024 T. Hunter Cobbs. All Rights Reserved.
+Copyright (C) 2024 T. Hunter Cobbs
 
-This software is proprietary. See [LICENSE](LICENSE) for details. Unauthorized copying, modification, distribution, or use of this software is strictly prohibited.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. See [LICENSE](LICENSE) for details.
 
 ## Documentation
 
