@@ -281,6 +281,70 @@ onGettingHit: ["Ow! That was my favorite hull!", ...]
 - [x] Edge case scenarios (forfeit, turn validation)
 - [x] 354 total tests passing
 
+## Graphics Approach
+
+Hybrid system using three complementary techniques. No external assets required.
+
+### Ship Rendering (Procedural)
+
+WWII silhouettes drawn via `CGPath` polygons and composed `SKShapeNode` elements:
+
+| Ship | Visual Approach |
+|------|-----------------|
+| Carrier | Flat deck with island superstructure, angled bow |
+| Battleship | Layered turrets fore/aft, bridge tower |
+| Cruiser | Streamlined hull, single turret stack |
+| Submarine | Cylindrical hull with conning tower |
+| Destroyer | Low profile, dual stacks |
+
+Ships rendered to `SKTexture` for reuse. Tintable for player/enemy distinction.
+
+### Effects (SpriteKit Particle System)
+
+Dynamic effects using `SKEmitterNode` with no external textures:
+
+| Effect | Trigger | Configuration |
+|--------|---------|---------------|
+| Explosion | Hit confirmed | Orange/red burst, outward velocity, alpha fade |
+| Water splash | Miss | Blue/white particles, upward then gravity fall |
+| Smoke plume | Ship damaged | Gray particles, slow rise, drift |
+| Fire | Ship critical | Orange flicker, rapid birth rate |
+| Sinking | Ship destroyed | Bubbles rising, hull descending |
+
+### UI Elements (SF Symbols)
+
+System icons for interface elements:
+
+| Element | Symbol | Usage |
+|---------|--------|-------|
+| Target reticle | `scope` | Attack cursor |
+| Hit marker | `xmark.circle.fill` | Confirmed hit on grid |
+| Miss marker | `circle` | Confirmed miss on grid |
+| Settings | `gearshape` | Menu button |
+| Sound toggle | `speaker.wave.2` / `speaker.slash` | Audio control |
+| Timer | `clock` | Turn countdown |
+| Victory | `flag.checkered` | Win screen |
+| Defeat | `flag.fill` | Lose screen |
+
+### Grid (Procedural)
+
+Simple `SKShapeNode` rectangles:
+- 10x10 grid with stroke borders
+- Fill color indicates state (empty, ship, hit, miss)
+- Coordinate labels (A-J, 1-10) via `SKLabelNode`
+- Ocean gradient background via `SKShaderNode` or layered nodes
+
+## Implementation Phases
+
+### Phase 8: Enhanced Visualization (PENDING)
+- [ ] Ship silhouette paths (CGPath for each ship type)
+- [ ] Ship rendering pipeline (path to texture to sprite)
+- [ ] Particle effect library (explosion, splash, smoke, fire, sinking)
+- [ ] SF Symbol integration for UI elements
+- [ ] Grid rendering with SpriteKit
+- [ ] Animation system for state transitions
+- [ ] Unit tests for rendering components
+
 ## Security Considerations
 
 1. **Input Validation**: All coordinates bounds-checked before processing
