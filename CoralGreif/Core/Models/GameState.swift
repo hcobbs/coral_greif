@@ -190,6 +190,27 @@ struct GameState: Equatable, Sendable {
         }
     }
 
+    /// Removes a ship from a player's board.
+    /// - Parameters:
+    ///   - shipId: The ID of the ship to remove
+    ///   - playerId: The ID of the player whose board to modify
+    /// - Returns: The removed ship or failure
+    mutating func removeShip(id shipId: UUID, for playerId: UUID) -> Result<Ship, GameError> {
+        guard phase == .setup else {
+            return .failure(.invalidPhase)
+        }
+
+        if playerId == player1.id {
+            let result = player1Board.removeShip(id: shipId)
+            return result.mapError { _ in GameError.shipPlacementFailed }
+        } else if playerId == player2.id {
+            let result = player2Board.removeShip(id: shipId)
+            return result.mapError { _ in GameError.shipPlacementFailed }
+        } else {
+            return .failure(.playerNotFound)
+        }
+    }
+
     /// Transitions from setup to battle phase.
     /// - Returns: Result indicating success or failure
     mutating func startBattle() -> Result<Void, GameError> {

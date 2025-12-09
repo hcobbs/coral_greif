@@ -43,7 +43,7 @@ struct Profile: Identifiable, Equatable, Codable, Sendable {
     ///   - name: The AI's display name
     ///   - difficulty: Optional difficulty identifier for avatar selection
     static func aiPlayer(name: String, avatarId: String? = nil) -> Profile {
-        var profile = Profile(id: UUID(), name: name, isAI: true, avatarId: avatarId)
+        let profile = Profile(id: UUID(), name: name, isAI: true, avatarId: avatarId)
         return profile
     }
 
