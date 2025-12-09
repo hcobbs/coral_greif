@@ -1,3 +1,10 @@
+//
+//  GameState.swift
+//  Coral Greif
+//
+//  Copyright (c) 2024 T. Hunter Cobbs. All Rights Reserved.
+//
+
 import Foundation
 
 /// Represents the complete state of a game at any point in time.

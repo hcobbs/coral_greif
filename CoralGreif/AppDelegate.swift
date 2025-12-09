@@ -1,3 +1,10 @@
+//
+//  AppDelegate.swift
+//  Coral Greif
+//
+//  Copyright (c) 2024 T. Hunter Cobbs. All Rights Reserved.
+//
+
 import UIKit
 
 @main

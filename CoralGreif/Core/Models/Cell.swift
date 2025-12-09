@@ -1,3 +1,10 @@
+//
+//  Cell.swift
+//  Coral Greif
+//
+//  Copyright (c) 2024 T. Hunter Cobbs. All Rights Reserved.
+//
+
 import Foundation
 
 /// Represents the state of a single cell on the game board.
