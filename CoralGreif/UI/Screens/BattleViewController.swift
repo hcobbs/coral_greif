@@ -66,8 +66,8 @@ final class BattleViewController: UIViewController {
         return label
     }()
 
-    private lazy var enemyBoardView: BoardView = {
-        let view = BoardView()
+    private lazy var enemyBoardView: GameBoardView = {
+        let view = GameBoardView()
         view.displayMode = .hidden
         view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -84,8 +84,8 @@ final class BattleViewController: UIViewController {
         return label
     }()
 
-    private lazy var playerBoardView: BoardView = {
-        let view = BoardView()
+    private lazy var playerBoardView: GameBoardView = {
+        let view = GameBoardView()
         view.displayMode = .full
         view.interactionEnabled = false
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -356,11 +356,11 @@ final class BattleViewController: UIViewController {
     }
 }
 
-// MARK: - BoardViewDelegate
+// MARK: - GameBoardViewDelegate
 
-extension BattleViewController: BoardViewDelegate {
-    func boardView(_ boardView: BoardView, didTapCellAt coordinate: Coordinate) {
-        guard boardView == enemyBoardView && canInteract else { return }
+extension BattleViewController: GameBoardViewDelegate {
+    func gameBoardView(_ view: GameBoardView, didTapCellAt coordinate: Coordinate) {
+        guard view == enemyBoardView && canInteract else { return }
         executeAttack(at: coordinate)
     }
 }
@@ -374,8 +374,58 @@ extension BattleViewController: GameEngineDelegate {
 
         if turnPlayerId == playerId {
             punLabel.text = "Fire when ready!"
+            showTurnTransition(isPlayerTurn: true)
         } else {
             punLabel.text = "Enemy is targeting..."
+            showTurnTransition(isPlayerTurn: false)
+        }
+    }
+
+    private func showTurnTransition(isPlayerTurn: Bool) {
+        // Create overlay
+        let overlay = UIView()
+        overlay.backgroundColor = AppTheme.Colors.oceanDeep.withAlphaComponent(0.9)
+        overlay.alpha = 0
+        overlay.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(overlay)
+
+        // Turn label
+        let label = UILabel()
+        label.text = isPlayerTurn ? "Your Turn" : "Enemy Turn"
+        label.font = AppTheme.Fonts.title()
+        label.textColor = isPlayerTurn ? AppTheme.Colors.brassGold : AppTheme.Colors.hitRed
+        label.textAlignment = .center
+        label.alpha = 0
+        label.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        overlay.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            overlay.topAnchor.constraint(equalTo: view.topAnchor),
+            overlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            overlay.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            label.centerXAnchor.constraint(equalTo: overlay.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: overlay.centerYAnchor)
+        ])
+
+        // Animate in
+        UIView.animate(withDuration: 0.2, animations: {
+            overlay.alpha = 1
+            label.alpha = 1
+            label.transform = .identity
+        }) { _ in
+            // Hold
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                // Animate out
+                UIView.animate(withDuration: 0.2, animations: {
+                    overlay.alpha = 0
+                    label.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+                }) { _ in
+                    overlay.removeFromSuperview()
+                }
+            }
         }
     }
 

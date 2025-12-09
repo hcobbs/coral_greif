@@ -54,8 +54,8 @@ final class SetupViewController: UIViewController {
         return label
     }()
 
-    private lazy var boardView: BoardView = {
-        let view = BoardView()
+    private lazy var boardView: GameBoardView = {
+        let view = GameBoardView()
         view.displayMode = .full
         view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -405,10 +405,10 @@ final class SetupViewController: UIViewController {
     }
 }
 
-// MARK: - BoardViewDelegate
+// MARK: - GameBoardViewDelegate
 
-extension SetupViewController: BoardViewDelegate {
-    func boardView(_ boardView: BoardView, didTapCellAt coordinate: Coordinate) {
+extension SetupViewController: GameBoardViewDelegate {
+    func gameBoardView(_ view: GameBoardView, didTapCellAt coordinate: Coordinate) {
         if selectedShipType != nil {
             placeShip(at: coordinate)
         } else {
@@ -429,17 +429,17 @@ extension SetupViewController: BoardViewDelegate {
         }
     }
 
-    func boardView(_ boardView: BoardView, didLongPressAt coordinate: Coordinate) {
+    func gameBoardView(_ view: GameBoardView, didLongPressAt coordinate: Coordinate) {
         previewOrigin = coordinate
         updatePreview()
     }
 
-    func boardView(_ boardView: BoardView, didDragTo coordinate: Coordinate) {
+    func gameBoardView(_ view: GameBoardView, didDragTo coordinate: Coordinate) {
         previewOrigin = coordinate
         updatePreview()
     }
 
-    func boardView(_ boardView: BoardView, didEndDragAt coordinate: Coordinate?) {
+    func gameBoardView(_ view: GameBoardView, didEndDragAt coordinate: Coordinate?) {
         if let coord = coordinate, selectedShipType != nil {
             placeShip(at: coord)
         }
